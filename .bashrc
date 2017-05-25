@@ -21,6 +21,35 @@ function weather {
     fi
 }
 
+function line_count {
+    wc -l | tr -d [[:space:]]
+}
+
+function job_count {
+    jobs | line_count
+}
+
+function space {
+    # Usage: space [dir]
+    # Example:
+    #     space
+    #     space /
+    DIR="$1"
+    if [ -z "$DIR" ]; then
+        case "$OSTYPE" in
+            linux*)
+                DIR='/home'
+                ;;
+            darwin*)
+                DIR='/Users'
+                ;;
+        esac
+    fi
+    du --human-readable --max-depth=1 "$DIR" 2> /dev/null \
+        | grep --extended-regexp 'M|G' \
+        | sort --human-numeric-sort --reverse
+}
+
 #######
 # ALIAS
 #######

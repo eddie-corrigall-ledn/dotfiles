@@ -20,6 +20,7 @@ export LESS="-R"
 # Set the editor to VIM
 export EDITOR=/usr/bin/vim
 
+# Coreutils
 # brew install coreutils
 export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
 export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"

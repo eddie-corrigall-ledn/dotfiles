@@ -15,6 +15,9 @@ fi
 #alias ls='ls -l --color=auto'
 alias ls='ls -l -G'
 
+# Sublime
+alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"
+
 #############
 ##### EXPORTS
 #############

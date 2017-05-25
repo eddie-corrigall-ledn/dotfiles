@@ -8,6 +8,19 @@ if [[ -f ~/.deeprc ]]; then
     source ~/.deeprc
 fi
 
+######
+# MISC
+######
+
+function weather {
+    # Usage: weather [city]
+    if [[ $# -eq 0 ]]; then
+        curl http://wttr.in/
+    else
+        curl "http://wttr.in/$1"
+    fi
+}
+
 #######
 # ALIAS
 #######

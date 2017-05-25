@@ -145,7 +145,7 @@ if [[ -n $SSH_CONNECTION ]]; then
     source ~/virtualenv/bin/activate
 fi
 
-# CXSSH
+# CSSHX
 
 function ss {
     # Usage: ss [hosts]

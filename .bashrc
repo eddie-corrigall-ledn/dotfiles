@@ -8,6 +8,34 @@ if [[ -f ~/.deeprc ]]; then
     source ~/.deeprc
 fi
 
+#########
+# EXPORTS
+#########
+
+# Tell the pager program less to interpret "raw" control sequences appropriately
+# ie. IPython uses raw control sequences to make colored text in its displays
+export PAGER=/usr/bin/less
+export LESS="-R"
+
+# Set the editor to VIM
+export EDITOR=/usr/bin/vim
+
+# brew install coreutils
+export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
+export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
+
+#######
+# ALIAS
+#######
+
+# Coreutils
+alias ls='gls -l --color=auto'
+alias du='gdu --human-readable --max-depth=1'
+alias sort='gsort'
+
+# Sublime
+alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"
+
 ######
 # MISC
 ######
@@ -36,45 +64,12 @@ function space {
     #     space /
     DIR="$1"
     if [ -z "$DIR" ]; then
-        case "$OSTYPE" in
-            linux*)
-                DIR='/home'
-                ;;
-            darwin*)
-                DIR='/Users'
-                ;;
-        esac
+        DIR="$PWD"
     fi
     du --human-readable --max-depth=1 "$DIR" 2> /dev/null \
         | grep --extended-regexp 'M|G' \
         | sort --human-numeric-sort --reverse
 }
-
-#######
-# ALIAS
-#######
-
-#alias ls='ls -l --color=auto'
-alias ls='ls -l -G'
-
-# Sublime
-alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"
-
-#########
-# EXPORTS
-#########
-
-# Tell the pager program less to interpret "raw" control sequences appropriately
-# ie. IPython uses raw control sequences to make colored text in its displays
-export PAGER=/usr/bin/less
-export LESS="-R"
-
-# Set the editor to VIM
-export EDITOR=/usr/bin/vim
-
-# brew install coreutils
-export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
-export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
 
 ######
 # PSQL

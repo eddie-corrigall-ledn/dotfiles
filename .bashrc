@@ -304,7 +304,7 @@ function prompt_command {
     if [[ $CWD != $PWD ]]; then
         local CWD_FILES=(*)
         if [[ $CWD_FILES != '*' ]]; then
-            ls -d "${CWD_FILES[@]:0:50}"
+            ls -d "${CWD_FILES[@]:0:24}"
         fi
         export CWD=$PWD
     fi

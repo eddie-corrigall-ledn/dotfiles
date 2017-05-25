@@ -8,9 +8,9 @@ if [[ -f ~/.deeprc ]]; then
     source ~/.deeprc
 fi
 
-###########
-##### ALIAS
-###########
+#######
+# ALIAS
+#######
 
 #alias ls='ls -l --color=auto'
 alias ls='ls -l -G'
@@ -18,9 +18,9 @@ alias ls='ls -l -G'
 # Sublime
 alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"
 
-#############
-##### EXPORTS
-#############
+#########
+# EXPORTS
+#########
 
 # Tell the pager program less to interpret "raw" control sequences appropriately
 # ie. IPython uses raw control sequences to make colored text in its displays
@@ -34,9 +34,9 @@ export EDITOR=/usr/bin/vim
 export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
 export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
 
-##########
-##### PSQL
-##########
+######
+# PSQL
+######
 
 export PATH="$PATH:/usr/pgsql-9.3/bin:/usr/pgsql-9.2/bin"
 
@@ -56,9 +56,9 @@ function pg_restore_table {
     pg_restore --ignore-version --verbose --host=$host --username=$username --dbname=$username $backup
 }
 
-#########
-##### SSH
-#########
+#####
+# SSH
+#####
 
 function all_hosts {
     grep '^Host' ~/.ssh/config | grep -v '[?*]' | cut -d ' ' -f 2-
@@ -78,25 +78,15 @@ function complete_ssh {
 
 complete -F complete_ssh ssh
 
-###########
-##### UNATA
-###########
+# Python remote virtualenv
 
 if [[ -n $SSH_CONNECTION ]]; then
-    export PYTHONPATH=$(
-        x=''
-        for repo in /data/shared*; do
-            if [[ -d $repo ]]; then
-                if [[ -z $x ]]; then
-                    x="$repo"
-                else
-                    x="$x:$repo"
-                fi
-            fi
-        done
-        echo $x
-    )
+    source ~/virtualenv/bin/activate
 fi
+
+##########
+# SESSIONS
+##########
 
 # Creating sessions
 

@@ -1,0 +1,85 @@
+[user]
+  name  = Eddie Corrigall
+  email = eddie@unata.com
+
+[alias]
+  br = "branch"
+  ci = "commit"
+  cm = "commit -m"
+  co = "checkout"
+  cp = "cherry-pick"
+  d  = "diff"
+  di = "diff --cached"
+  dt = "difftool"
+  fo = "fetch origin"
+  fu = "fetch upstream"
+  id = "rev-parse"
+  l  = "log -10     --all --topo-order --full-history --pretty='tformat:%C(bold red)%h%x09%Creset %s %C(bold yellow)(by %an)%Creset%Cgreen%d%Creset'"
+  ll = "log         --all --topo-order --full-history --pretty='tformat:%C(bold red)%h%x09%Creset %s %C(bold yellow)(by %an)%Creset%Cgreen%d%Creset'"
+  lg = "log --graph --all --topo-order --full-history --pretty='tformat:%C(bold red)%h%x09%Creset %s %C(bold yellow)(by %an)%Creset%Cgreen%d%Creset'"
+  lv = "log --graph --all --topo-order --full-history --pretty='tformat:%h%x09 %s (by %an)%d'"
+  mo = "!git merge --no-ff origin/`git currentbranch`"
+  mu = "!git merge --no-ff upstream/`git currentbranch`"
+  po = "push origin"
+  re = "reset HEAD"
+  st = "status -sb"
+  tr = "log --graph --abbrev-commit --all --full-history --color --branches --decorate --pretty=oneline --date=relative"
+  uo = "!git merge --ff-only origin/`git currentbranch`"
+  up = "!git remote update -p; git merge --ff-only @{u}"
+  uu = "!git merge --ff-only upstream/`git currentbranch`"
+
+  branches      = "branch -a"
+  currentbranch = "!git branch --contains HEAD | grep '*' | tr -s ' ' | cut -d ' ' -f2"
+  merge         = "merge --no-ff"
+  pull          = "pull --ff-only"
+  purr          = "pull --rebase"
+  ready         = "rebase -i @{u}"
+  remotes       = "remote -v"
+  root          = "rev-parse --show-toplevel"
+  standup       = "!git log --since yesterday --author $(git config user.email) --pretty=short"
+  wipe          = "reset --hard HEAD"
+
+[color]
+  ui         = auto
+  branch     = auto
+  diff       = auto
+  status     = auto
+[color "branch"]
+  current    = yellow reverse
+  local      = yellow
+  remote     = green
+[color "diff"]
+  meta       = yellow bold
+  frag       = magenta bold
+  old        = red bold
+  new        = green bold
+  whitespace = red reverse
+[color "status"]
+  added      = yellow
+  changed    = green
+  untracked  = cyan
+
+[core]
+  editor = vim
+  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+
+[help]
+  autocorrect = 0
+
+[mirror]
+  summary = true
+
+[pack]
+  threads = 0
+
+[push]
+  default = current
+
+[web]
+  browser = chrome

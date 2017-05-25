@@ -41,6 +41,10 @@ alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/sub
 # MISC
 ######
 
+function edit_bashrc {
+    $EDITOR ~/.bashrc && . ~/.bashrc
+}
+
 function weather {
     # Usage: weather [city]
     if [[ $# -eq 0 ]]; then
@@ -70,6 +74,25 @@ function space {
     du --human-readable --max-depth=1 "$DIR" 2> /dev/null \
         | grep --extended-regexp 'M|G' \
         | sort --human-numeric-sort --reverse
+}
+
+function prompt_yes_no {
+    message="$1"
+    read -p "$message " -n 1 choice
+    echo
+    case "$choice" in
+        y|Y)
+            echo 'yes'
+            return 0
+            ;;
+        n|N)
+            echo 'no'
+            ;;
+        *)
+            echo 'invalid'
+            ;;
+    esac
+    return 1
 }
 
 ######
@@ -121,6 +144,35 @@ complete -F complete_ssh ssh
 if [[ -n $SSH_CONNECTION ]]; then
     source ~/virtualenv/bin/activate
 fi
+
+# CXSSH
+
+function ss {
+    # Usage: ss [hosts]
+    # brew install csshx
+    # Example:
+    # ss uat-web-01 uat-web-02
+    HOSTS="$@"
+    HOSTS_COUNT="$#"
+    if [[ -z "${HOSTS_COUNT}" ]]; then
+        HOSTS_COUNT=0
+    fi
+    echo "(${HOSTS_COUNT}): $HOSTS"
+    case ${HOSTS_COUNT} in
+        0)
+            echo "No such host(s)"
+            ;;
+        1)
+            ssh $HOSTS
+            ;;
+        *)
+            prompt_yes_no "Connect to hosts? (y/n)"
+            if [[ "$?" == 0 ]]; then
+                csshx --hosts <(for x in $HOSTS; do echo $x; done)
+            fi
+            ;;
+    esac
+}
 
 ##########
 # SESSIONS

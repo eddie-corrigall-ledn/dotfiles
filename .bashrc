@@ -12,6 +12,7 @@ fi
 ##### ALIAS
 ###########
 
+#alias ls='ls -l --color=auto'
 alias ls='ls -l -G'
 
 #############

@@ -3,6 +3,11 @@ if [[ -f /etc/bashrc ]]; then
     source /etc/bashrc
 fi
 
+# Source deep definitions
+if [[ -f ~/.deeprc ]]; then
+    source ~/.deeprc
+fi
+
 ###########
 ##### ALIAS
 ###########

@@ -1,0 +1,19 @@
+\x auto
+\set VERBOSITY verbose
+set TIMEZONE='US/Eastern'
+
+-- Setup command history
+\set HISTSIZE 1000
+\set HISTFILE ~/.psql_history- :HOST - :DBNAME
+\set HISTCONTROL ignoredups
+
+-- Auto complete
+\set COMP_KEYWORD_CASE upper
+
+-- See how long a query takes
+\timing
+
+-- Setup prompt
+\set PROMPT1 '(%n@%M:%>) [%/] > '
+\set PROMPT1 '%[%033[1m%]%M %n@%/%R%[%033[0m%]%# '
+\set PROMPT2 '[more] %R > '

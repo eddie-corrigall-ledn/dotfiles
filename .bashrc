@@ -266,3 +266,60 @@ USER_AGENT |
     echo "save session as $session_name..."
     http --session=$session_name $host/v2/user "Authorization:Bearer $session_token"
 }
+
+########
+# PROMPT
+########
+
+export BLACK='\[\033[0;30m\]'
+export DARK_GREY='\[\033[1;30m\]'
+export LIGHT_GREY='\[\033[0;37m\]'
+export BLUE='\[\033[0;34m\]'
+export LIGHT_BLUE='\[\033[1;34m\]'
+export GREEN='\[\033[0;32m\]'
+export LIGHT_GREEN='\[\033[1;32m\]'
+export CYAN='\[\033[0;36m\]'
+export LIGHT_CYAN='\[\033[1;36m\]'
+export RED='\[\033[0;31m\]'
+export LIGHT_RED='\[\033[1;31m\]'
+export PURPLE='\[\033[0;35m\]'
+export LIGHT_PURPLE='\[\033[1;35m\]'
+export BROWN='\[\033[0;33m\]'
+export YELLOW='\[\033[1;33m\]'
+export WHITE='\[\033[1;37m\]'
+export COLOUR_OFF='\[\033[0m\]'
+
+function title {
+    echo -ne "\033]0;$*\007"
+}
+
+function prompt_command {
+    # Set window title
+    if [[ -n $SSH_CONNECTION ]]; then
+        title "$HOSTNAME"
+    else
+        title 'localhost'
+    fi
+    # On pwd change, ls the directory up to N lines
+    if [[ $CWD != $PWD ]]; then
+        local CWD_FILES=(*)
+        if [[ $CWD_FILES != '*' ]]; then
+            ls -d "${CWD_FILES[@]:0:50}"
+        fi
+        export CWD=$PWD
+    fi
+    # Adjust prompt based on screen width
+    local P=()
+    if [[ $COLUMNS -le 80 ]]; then
+        P+="[\$?] \u@\h:\w\n$ "
+    else
+        P+="${GREEN}[\$?]$COLOUR_OFF"
+        P+="${DARK_GREY}[\$(gitbranch)]$COLOUR_OFF"
+        P+=' '
+        P+="$WHITE\u$LIGHT_GREY@$PURPLE\h$DARK_GREY:$GREEN\w$COLOUR_OFF"
+        P+=" \$ "
+    fi
+    export PS1=${P[@]}
+}
+
+export PROMPT_COMMAND='prompt_command'

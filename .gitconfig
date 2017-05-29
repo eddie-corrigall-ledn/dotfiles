@@ -29,7 +29,7 @@
   uu = "!git merge --ff-only upstream/`git currentbranch`"
 
   branches      = "branch -a"
-  currentbranch = "!git branch --contains HEAD | grep '*' | tr -s ' ' | cut -d ' ' -f2"
+  currentbranch = "!git symbolic-ref --short HEAD 2> /dev/null"
   merge         = "merge --no-ff"
   pull          = "pull --ff-only"
   purr          = "pull --rebase"

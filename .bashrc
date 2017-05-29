@@ -120,6 +120,7 @@ function pg_restore_table {
     host="$1"
     username="$2"
     backup="$3"
+    prompt_yes_or_no "Restore $backup into $username@$host? (y/n)"
     pg_restore --ignore-version --verbose --host=$host --username=$username --dbname=$username $backup
 }
 

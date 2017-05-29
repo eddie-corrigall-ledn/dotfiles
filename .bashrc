@@ -30,9 +30,15 @@ export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
 #######
 
 # Coreutils
-alias ls='gls -l --color=auto'
-alias du='gdu --human-readable --max-depth=1'
-alias sort='gsort'
+
+gls_command=$(command -v gls)
+alias ls="${gls_command:=ls} -l --color=auto"
+
+gdu_command=$(command -v gdu)
+alias du="${gdu_command:=du} --human-readable --max-depth=1"
+
+gsort_command=$(command -v gsort)
+alias sort="${gsort_command:=sort}"
 
 # Sublime
 alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"

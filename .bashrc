@@ -12,6 +12,10 @@ fi
 # EXPORTS
 #########
 
+# Set timezone context
+# Useful for some utilities like pytest
+export TZ='US/Eastern'
+
 # Tell the pager program less to interpret "raw" control sequences appropriately
 # ie. IPython uses raw control sequences to make colored text in its displays
 export PAGER=/usr/bin/less

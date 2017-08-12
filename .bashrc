@@ -3,11 +3,6 @@ if [[ -f /etc/bashrc ]]; then
     source /etc/bashrc
 fi
 
-# Source deep definitions
-if [[ -f ~/.deeprc ]]; then
-    source ~/.deeprc
-fi
-
 #########
 # EXPORTS
 #########
@@ -103,6 +98,15 @@ function prompt_yes_no {
             ;;
     esac
     return 1
+}
+
+function gitbranch {
+    BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
+    if [[ -n $BRANCH ]]; then
+        echo $BRANCH
+    else
+        echo '?'
+    fi
 }
 
 ######

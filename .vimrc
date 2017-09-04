@@ -30,6 +30,9 @@ set tabstop=4
 " when indenting with visual mode >, use 4 spaces width
 set shiftwidth=4
 
+" Sets the number of columns for a tab
+set softtabstop=4
+
 " On pressing tab, insert 4 spaces
 set expandtab
 

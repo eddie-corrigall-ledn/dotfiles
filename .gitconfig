@@ -2,6 +2,9 @@
   name  = Eddie Corrigall
   email = eddiecorrigall@gmail.com
 
+[core]
+  editor = vim
+
 [alias]
   br = "branch"
   ci = "commit"

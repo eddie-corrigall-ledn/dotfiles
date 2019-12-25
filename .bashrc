@@ -46,7 +46,7 @@ alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/sub
 # MISC
 ######
 
-function edit_bashrc {
+function bashrc() {
     $EDITOR ~/.bashrc && . ~/.bashrc
 }
 

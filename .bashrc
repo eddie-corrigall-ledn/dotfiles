@@ -3,6 +3,62 @@ if [[ -f /etc/bashrc ]]; then
     source /etc/bashrc
 fi
 
+########
+# AWSCLI
+########
+
+export PATH="$HOME/./Library/Python/3.7/bin:$PATH"
+
+##########
+# Postgres
+##########
+
+# brew install libpq (for psql client)
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+function pg_usage() {
+    echo "Usage: pg [service] [environment]"
+}
+
+function pg() {
+    # Usage: pg <service> <environment>
+    # Define environment variables:
+    #   LOCAL_MYAPP_PG_USER
+    #   LOCAL_MYAPP_PG_PASSWORD
+    #   ...
+    #   <environment>_<service>_PG_USER
+    #   <environment>_<service>_PG_PASSWORD
+    #   ...
+    local service="$1"
+    service="$(echo ${service:=MYAPP} | uppercase)"
+
+    local environment="$2"
+    environment="$(echo ${environment:=LOCAL} | uppercase)"
+
+    local     user=$(eval "echo $(printf "$%s_%s_PG_USER"     "$environment" "$service")")
+    local password=$(eval "echo $(printf "$%s_%s_PG_PASSWORD" "$environment" "$service")")
+    local     host=$(eval "echo $(printf "$%s_%s_PG_HOST"     "$environment" "$service")")
+    local     port=$(eval "echo $(printf "$%s_%s_PG_PORT"     "$environment" "$service")")
+    local   dbname=$(eval "echo $(printf "$%s_%s_PG_DBNAME"   "$environment" "$service")")
+
+    if [[ -z "$user" ]]; then
+        pg_usage
+        return 1
+    fi
+
+    echo "USER: $user"
+    echo "HOST: $host"
+    echo "PORT: $port"
+    echo "DBNAME: $dbname"
+    echo
+
+    PGPASSWORD=${password} psql \
+        --user="${user}" \
+        --host="${host}" \
+        --port="${port}" \
+        --dbname="${dbname}"
+}
+
 #########
 # EXPORTS
 #########
@@ -30,17 +86,25 @@ export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
 
 # Coreutils
 
-gls_command=$(command -v gls)
-alias ls="${gls_command:=ls} -l --color=auto"
+if command -v gls > /dev/null; then
+    alias ls="gls -lha --color=auto"
+else
+    alias ls="ls -lahG"
+fi
 
-gdu_command=$(command -v gdu)
-alias du="${gdu_command:=du} --human-readable --max-depth=1"
+if command -v gdu > /dev/null; then
+    alias du="gdu --human-readable --max-depth=1"
+fi
 
-gsort_command=$(command -v gsort)
-alias sort="${gsort_command:=sort}"
+if command -v gsort > /dev/null; then
+    alias sort="gsort"
+fi
 
 # Sublime
 alias subl="/usr/local/Caskroom/sublime-*/*/*.app/Contents/SharedSupport/bin/subl"
+
+# Python unittest
+alias unittest="python -m unittest"
 
 ######
 # MISC
@@ -50,7 +114,15 @@ function bashrc() {
     $EDITOR ~/.bashrc && . ~/.bashrc
 }
 
-function weather {
+function uppercase() {
+    cat /dev/stdin | tr '[a-z]' '[A-Z]'
+}
+
+function lowercase() {
+    cat /dev/stdin | tr '[A-Z]' '[a-z]'
+}
+
+function weather() {
     # Usage: weather [city]
     if [[ $# -eq 0 ]]; then
         curl http://wttr.in/
@@ -59,15 +131,15 @@ function weather {
     fi
 }
 
-function line_count {
-    wc -l | tr -d [[:space:]]
+function line_count() {
+    wc -l | tr -d '[[:space:]]'
 }
 
-function job_count {
+function job_count() {
     jobs | line_count
 }
 
-function space {
+function space() {
     # Usage: space [dir]
     # Example:
     #     space
@@ -153,12 +225,6 @@ function complete_ssh {
 }
 
 complete -F complete_ssh ssh
-
-# Python remote virtualenv
-
-if [[ -n $SSH_CONNECTION ]]; then
-    source ~/virtualenv/bin/activate
-fi
 
 # CSSHX
 
@@ -332,9 +398,11 @@ function prompt_command {
         P+="${DARK_GREY}[\$(gitbranch)]$COLOUR_OFF"
         P+=' '
         P+="$WHITE\u$LIGHT_GREY@$PURPLE\h$DARK_GREY:$GREEN\w$COLOUR_OFF"
-        P+=" \$ "
+        P+="\n\$ "
     fi
+    source ~/repos/awscli-ext/awscli.ext.sh
     export PS1=${P[@]}
+    export PS1="$(aws_ps1)\n$PS1"
 }
 
 export PROMPT_COMMAND='prompt_command'

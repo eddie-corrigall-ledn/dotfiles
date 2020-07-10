@@ -6,7 +6,7 @@ NOW="$(date +%s)"
 
 function usage() {
     echo "USAGE: $NAME <install|uninstall>"
-    echo 'Install dotfiles for custom user experience'
+    echo 'Install dotfiles for custom shell experience'
 }
 
 function symlink() {

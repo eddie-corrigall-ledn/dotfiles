@@ -1,18 +1,40 @@
+#!/bin/bash
+
+##########
+# Homebrew
+##########
+
+if ! command -v brew > /dev/null; then
+    echo 'Installing: Homebrew'
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+###########
+# Coreutils
+###########
+
+if [ ! -d /usr/local/opt/coreutils/bin ]; then
+    echo 'Installing: coreutils'
+    brew install coreutils
+fi
+
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+
 ##########
 # Postgres
 ##########
 
-# brew install libpq (for psql client)
-export PATH="/usr/local/opt/libpq/bin:$PATH"
-export PATH="/usr/pgsql-9.3/bin:/usr/pgsql-9.2/bin:$PATH"
+if ! command -v psql > /dev/null; then
+    echo 'Installing: Postgres client'
+    brew install libpq
+fi
 
-function pg_usage() {
-    echo "Usage: pg [service] [environment]"
-}
+export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 function pg() {
     # Usage: pg <service> <environment>
-    # Define environment variables:
+    # Define environment variables and connect to service and environment easily, example:
     #   LOCAL_MYAPP_PG_USER
     #   LOCAL_MYAPP_PG_PASSWORD
     #   ...
@@ -32,7 +54,7 @@ function pg() {
     local   dbname=$(eval "echo $(printf "$%s_%s_PG_DBNAME"   "$environment" "$service")")
 
     if [[ -z "$user" ]]; then
-        pg_usage
+        echo "Usage: pg [service] [environment]"
         return 1
     fi
 
@@ -82,30 +104,12 @@ export LESS="-R"
 # Set the editor to VIM
 export EDITOR=/usr/bin/vim
 
-# Coreutils
-# brew install coreutils
-export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
-export MANPATH="$MANPATH:/usr/local/opt/coreutils/libexec/gnuman"
-
 #######
 # ALIAS
 #######
 
-# Coreutils
-
-if command -v gls > /dev/null; then
-    alias ls="gls -lha --color=auto"
-else
-    alias ls="ls -lahG"
-fi
-
-if command -v gdu > /dev/null; then
-    alias du="gdu --human-readable --max-depth=1"
-fi
-
-if command -v gsort > /dev/null; then
-    alias sort="gsort"
-fi
+alias ls="ls -lha --color=auto"
+alias du="du --human-readable --max-depth=1"
 
 # Python unittest
 alias unittest="python -m unittest"
@@ -152,8 +156,8 @@ function space() {
     if [ -z "$dir" ]; then
         dir="$PWD"
     fi
-    du --human-readable --max-depth=1 "$dir" 2> /dev/null \
-        | grep --extended-regexp 'M|G' \
+    du --human-readable --max-depth=1 "$dir" \
+        | grep --extended-regexp 'K|M|G' \
         | sort --human-numeric-sort --reverse
 }
 
@@ -163,14 +167,14 @@ function prompt_yes_no() {
     echo
     case "$choice" in
         y|Y)
-            echo 'yes'
+            echo '=> Yes'
             return 0
             ;;
         n|N)
-            echo 'no'
+            echo '=> No'
             ;;
         *)
-            echo 'invalid'
+            echo '=> Invalid'
             ;;
     esac
     return 1
@@ -211,9 +215,14 @@ complete -F complete_ssh ssh
 # CSSHX
 #######
 
+if ! command -v csshx > /dev/null; then
+    echo 'Installing: CSSHX'
+    brew install csshx
+fi
+
 function ss() {
     # Usage: ss [hosts]
-    # brew install csshx
+    # Connect to multiple hosts via ssh
     # Example:
     # ss uat-web-01 uat-web-02
     HOSTS="$@"
@@ -261,6 +270,8 @@ export WHITE='\[\033[1;37m\]'
 export COLOUR_OFF='\[\033[0m\]'
 
 function title() {
+    # Usage: title [window title]
+    # Set the window title
     echo -ne "\033]0;$*\007"
 }
 

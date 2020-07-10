@@ -13,24 +13,24 @@ fi
 # Coreutils
 ###########
 
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+
 if [ ! -d /usr/local/opt/coreutils/bin ]; then
     echo 'Installing: coreutils'
     brew install coreutils
 fi
 
-export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-
 ##########
 # Postgres
 ##########
+
+export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 if ! command -v psql > /dev/null; then
     echo 'Installing: Postgres client'
     brew install libpq
 fi
-
-export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 function pg() {
     # Usage: pg <service> <environment>

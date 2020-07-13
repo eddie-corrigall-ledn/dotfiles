@@ -21,9 +21,11 @@ if [ ! -d /usr/local/opt/coreutils/bin ]; then
     brew install coreutils
 fi
 
-##########
+#####
+# SQL
+#####
+
 # Postgres
-##########
 
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 
@@ -32,43 +34,74 @@ if ! command -v psql > /dev/null; then
     brew install libpq
 fi
 
-function pg() {
-    # Usage: pg <service> <environment>
+# MySql
+
+export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+
+if ! command -v mysql > /dev/null; then
+    echo 'Installing: MySQL client'
+    brew install mysql-client
+fi
+
+function sql() {
+    # Usage: sql <psql|mysql> <service> [environment]
     # Define environment variables and connect to service and environment easily, example:
-    #   LOCAL_MYAPP_PG_USER
-    #   LOCAL_MYAPP_PG_PASSWORD
+    #   LOCAL_MYAPP_SQL_USER
+    #   LOCAL_MYAPP_SQL_PASSWORD
     #   ...
-    #   <environment>_<service>_PG_USER
-    #   <environment>_<service>_PG_PASSWORD
+    #   <environment>_<service>_SQL_USER
+    #   <environment>_<service>_SQL_PASSWORD
     #   ...
-    local service="$1"
-    service="$(echo ${service:=MYAPP} | uppercase)"
+    local client="$1"
+    client="$(echo "$client" | lowercase)"
 
-    local environment="$2"
-    environment="$(echo ${environment:=LOCAL} | uppercase)"
+    local service="$2"
+    service="$(echo "$service" | uppercase)"
 
-    local     user=$(eval "echo $(printf "$%s_%s_PG_USER"     "$environment" "$service")")
-    local password=$(eval "echo $(printf "$%s_%s_PG_PASSWORD" "$environment" "$service")")
-    local     host=$(eval "echo $(printf "$%s_%s_PG_HOST"     "$environment" "$service")")
-    local     port=$(eval "echo $(printf "$%s_%s_PG_PORT"     "$environment" "$service")")
-    local   dbname=$(eval "echo $(printf "$%s_%s_PG_DBNAME"   "$environment" "$service")")
+    echo "SERVICE: $service"
 
-    if [[ -z "$user" ]]; then
-        echo "Usage: pg [service] [environment]"
-        return 1
-    fi
+    local environment="$3"
+    environment="$(echo "${environment:=LOCAL}" | uppercase)"
+
+    echo "ENVIRONMENT: $environment"
+
+    local     user=$(eval "echo $(printf "$%s_%s_SQL_USER"     "$environment" "$service")")
+    local password=$(eval "echo $(printf "$%s_%s_SQL_PASSWORD" "$environment" "$service")")
+    local     host=$(eval "echo $(printf "$%s_%s_SQL_HOST"     "$environment" "$service")")
+    local     port=$(eval "echo $(printf "$%s_%s_SQL_PORT"     "$environment" "$service")")
+    local database=$(eval "echo $(printf "$%s_%s_SQL_DATABASE" "$environment" "$service")")
 
     echo "USER: $user"
     echo "HOST: $host"
     echo "PORT: $port"
-    echo "DBNAME: $dbname"
+    echo "DATABASE: $database"
     echo
 
-    PGPASSWORD=${password} psql \
-        --user="${user}" \
-        --host="${host}" \
-        --port="${port}" \
-        --dbname="${dbname}"
+    if [[ -z "$user" ]]; then
+        echo 'ERROR: user undefined!' > /dev/stderr
+        echo 'Usage: sql <service> <environment>'
+        return 1
+    fi
+
+    case "$client" in
+        ms|mysql)
+            MYSQL_PWD="${password}" mysql \
+                --user="${user}" \
+                --host="${host}" \
+                --port="${port}" \
+                --database="${database}"
+            ;;
+        pg|psql)
+            PGPASSWORD="${password}" psql \
+                --user="${user}" \
+                --host="${host}" \
+                --port="${port}" \
+                --dbname="${database}"
+            ;;
+        *)
+            echo 'ERROR: Invalid client argument!' > /dev/stderr
+            ;;
+    esac
 }
 
 function pg_dump_table() {
@@ -117,6 +150,10 @@ alias unittest="python -m unittest"
 ######
 # MISC
 ######
+
+function now() {
+    date +%s
+}
 
 function bashrc() {
     $EDITOR ~/.bashrc && . ~/.bashrc
@@ -180,7 +217,13 @@ function prompt_yes_no() {
     return 1
 }
 
-function gitbranch() {
+########
+# GitHub
+########
+
+export REPOS="$HOME/repos"
+
+function git_branch() {
     BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
     if [[ -n $BRANCH ]]; then
         echo $BRANCH
@@ -296,7 +339,7 @@ function prompt_command() {
         P+="[\$?] \u@\h:\w\n$ "
     else
         P+="${GREEN}[\$?]$COLOUR_OFF"
-        P+="${DARK_GREY}[\$(gitbranch)]$COLOUR_OFF"
+        P+="${DARK_GREY}[\$(git_branch)]$COLOUR_OFF"
         P+=' '
         P+="$WHITE\u$LIGHT_GREY@$PURPLE\h$DARK_GREY:$GREEN\w$COLOUR_OFF"
         P+="\n\$ "

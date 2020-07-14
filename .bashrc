@@ -88,7 +88,7 @@ function sql() {
 
     if [[ -z "$user" ]]; then
         echo 'ERROR: user undefined!' > /dev/stderr
-        echo 'Usage: sql <service> <environment>'
+        echo 'Usage: sql <client> <service> <environment>'
         return 1
     fi
 

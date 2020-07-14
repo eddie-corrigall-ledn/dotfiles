@@ -21,6 +21,15 @@ if [ ! -d /usr/local/opt/coreutils/bin ]; then
     brew install coreutils
 fi
 
+##############
+# Sublime text
+##############
+
+if ! command -v subl > /dev/null; then
+    echo 'Installing: Sublime'
+    brew cask install sublime-text
+fi
+
 #####
 # SQL
 #####

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#######
+# XCode
+#######
+
+function xcode-reinstall() {
+    prompt_yes_no 'Are you sure you want to reinstall xcode? (y/n)'
+    sudo rm -fr /Library/Developer/CommandLineTools
+    xcode-select --install
+}
+
 ##########
 # Homebrew
 ##########
@@ -126,7 +136,7 @@ function pg_restore_table() {
     local host="$1"
     local username="$2"
     local backup="$3"
-    prompt_yes_or_no "Restore $backup into $username@$host? (y/n)"
+    prompt_yes_no "Restore $backup into $username@$host? (y/n)"
     pg_restore --ignore-version --verbose --host=$host --username=$username --dbname=$username $backup
 }
 
@@ -199,7 +209,7 @@ function space() {
     #     space
     #     space /
     local dir="$1"
-    if [ -z "$dir" ]; then
+    if [[ -z "$dir" ]]; then
         dir="$PWD"
     fi
     du --human-readable --max-depth=1 "$dir" \
@@ -233,11 +243,10 @@ function prompt_yes_no() {
 export REPOS="$HOME/repos"
 
 function git_branch() {
-    BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
-    if [[ -n $BRANCH ]]; then
-        echo $BRANCH
-    else
-        echo '?'
+    local branch
+    branch="$(git symbolic-ref --short HEAD 2> /dev/null)"
+    if [[ -n "$branch" ]]; then
+        echo -n "$branch"
     fi
 }
 
@@ -347,11 +356,17 @@ function prompt_command() {
     if [[ $COLUMNS -le 80 ]]; then
         P+="[\$?] \u@\h:\w\n$ "
     else
-        P+="${GREEN}[\$?]$COLOUR_OFF"
-        P+="${DARK_GREY}[\$(git_branch)]$COLOUR_OFF"
-        P+=' '
-        P+="$WHITE\u$LIGHT_GREY@$PURPLE\h$DARK_GREY:$GREEN\w$COLOUR_OFF"
-        P+="\n\$ "
+        P+="${GREEN}↪ \$?${COLOUR_OFF}"
+        P+=" "
+        P+="${PURPLE}[\t]${COLOUR_OFF}"
+        P+=" "
+        P+="${WHITE}\u$LIGHT_GREY"
+        P+="$GREEN:\w$COLOUR_OFF"
+        P+=" "
+        P+="$DARK_GREY\$(git_branch)$COLOUR_OFF"
+        P+="\n"
+        P+="\$"
+        P+=" "
     fi
     export PS1=${P[@]}
 }

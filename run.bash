@@ -23,6 +23,13 @@ function do_install() {
     symlink "$PWD/$DIR/.psqlrc" "$HOME/.psqlrc"
     symlink "$PWD/$DIR/.tmux.config" "$HOME/.tmux.config"
     symlink "$PWD/$DIR/.vimrc" "$HOME/.vimrc"
+    if [ "$(uname)" == "Darwin" ]; then
+        echo 'Set default shell to bash'
+        chsh -s /bin/bash
+        echo 'Setup bash profile'
+        touch "$HOME/.bash_profile"
+        echo '[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"' >> "$HOME/.bash_profile"
+    fi
 }
 
 function do_uninstall() {

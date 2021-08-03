@@ -31,15 +31,6 @@ if [ ! -d /usr/local/opt/coreutils/bin ]; then
     brew install coreutils
 fi
 
-##############
-# Sublime text
-##############
-
-if ! command -v subl > /dev/null; then
-    echo 'Installing: Sublime'
-    brew cask install sublime-text
-fi
-
 #####
 # SQL
 #####
@@ -271,42 +262,6 @@ function complete_ssh() {
 }
 
 complete -F complete_ssh ssh
-
-#######
-# CSSHX
-#######
-
-if ! command -v csshx > /dev/null; then
-    echo 'Installing: CSSHX'
-    brew install csshx
-fi
-
-function ss() {
-    # Usage: ss [hosts]
-    # Connect to multiple hosts via ssh
-    # Example:
-    # ss uat-web-01 uat-web-02
-    HOSTS="$@"
-    HOSTS_COUNT="$#"
-    if [[ -z "${HOSTS_COUNT}" ]]; then
-        HOSTS_COUNT=0
-    fi
-    echo "(${HOSTS_COUNT}): $HOSTS"
-    case ${HOSTS_COUNT} in
-        0)
-            echo "No such host(s)"
-            ;;
-        1)
-            ssh $HOSTS
-            ;;
-        *)
-            prompt_yes_no "Connect to hosts? (y/n)"
-            if [[ "$?" == 0 ]]; then
-                csshx --hosts <(for x in $HOSTS; do echo $x; done)
-            fi
-            ;;
-    esac
-}
 
 ########
 # PROMPT

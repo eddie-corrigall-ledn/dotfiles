@@ -10,15 +10,6 @@ function xcode-reinstall() {
     xcode-select --install
 }
 
-##########
-# Homebrew
-##########
-
-if ! command -v brew > /dev/null; then
-    echo 'Installing: Homebrew'
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-fi
-
 ###########
 # Coreutils
 ###########
@@ -26,32 +17,15 @@ fi
 export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
-if [ ! -d /usr/local/opt/coreutils/bin ]; then
-    echo 'Installing: coreutils'
-    brew install coreutils
-fi
-
 #####
 # SQL
 #####
 
 # Postgres
-
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 
-if ! command -v psql > /dev/null; then
-    echo 'Installing: Postgres client'
-    brew install libpq
-fi
-
 # MySql
-
 export PATH="/usr/local/opt/mysql-client/bin:$PATH"
-
-if ! command -v mysql > /dev/null; then
-    echo 'Installing: MySQL client'
-    brew install mysql-client
-fi
 
 function sql() {
     # Usage: sql <psql|mysql> <service> [environment]
@@ -101,7 +75,7 @@ function sql() {
                 --port="${port}" \
                 --database="${database}"
             ;;
-        pg|psql)
+        pg|psql|postgres)
             PGPASSWORD="${password}" psql \
                 --user="${user}" \
                 --host="${host}" \
@@ -238,7 +212,17 @@ function git_branch() {
     branch="$(git symbolic-ref --short HEAD 2> /dev/null)"
     if [[ -n "$branch" ]]; then
         echo -n "$branch"
+        return 0
     fi
+    return 1
+}
+
+function git_name() {
+    git config user.name 2> /dev/null
+}
+
+function git_has_diff() {
+    git diff --quite HEAD 2> /dev/null
 }
 
 #####
@@ -271,17 +255,19 @@ export BLACK='\[\033[0;30m\]'
 export DARK_GREY='\[\033[1;30m\]'
 export LIGHT_GREY='\[\033[0;37m\]'
 export BLUE='\[\033[0;34m\]'
-export LIGHT_BLUE='\[\033[1;34m\]'
+export LIGHT_BLUE='\[\033[0;94m\]'
+export LIGHT_BLUE_BOLD='\[\033[1;94m\]'
 export GREEN='\[\033[0;32m\]'
-export LIGHT_GREEN='\[\033[1;32m\]'
+export LIGHT_GREEN='\[\033[0;32m\]'
 export CYAN='\[\033[0;36m\]'
 export LIGHT_CYAN='\[\033[1;36m\]'
 export RED='\[\033[0;31m\]'
+export RED_BOLD='\[\033[1;31m\]'
 export LIGHT_RED='\[\033[1;31m\]'
 export PURPLE='\[\033[0;35m\]'
 export LIGHT_PURPLE='\[\033[1;35m\]'
-export BROWN='\[\033[0;33m\]'
-export YELLOW='\[\033[1;33m\]'
+export YELLOW='\[\033[0;33m\]'
+export YELLOW_BOLD='\[\033[1;33m\]'
 export WHITE='\[\033[1;37m\]'
 export COLOUR_OFF='\[\033[0m\]'
 
@@ -311,14 +297,16 @@ function prompt_command() {
     if [[ $COLUMNS -le 80 ]]; then
         P+="[\$?] \u@\h:\w\n$ "
     else
-        P+="${GREEN}↪ \$?${COLOUR_OFF}"
+        P+="${GREEN}↪ \$?"
         P+=" "
-        P+="${PURPLE}[\t]${COLOUR_OFF}"
+        P+="${PURPLE}[\t]"
         P+=" "
-        P+="${WHITE}\u$LIGHT_GREY"
-        P+="$GREEN:\w$COLOUR_OFF"
+        P+="${WHITE}\$(git_name || echo -n \$USER)"
+        P+="${GREEN}:\w"
         P+=" "
-        P+="$DARK_GREY\$(git_branch)$COLOUR_OFF"
+        P+="${RED_BOLD}\$(git_branch)"
+        P+="${YELLOW_BOLD}\$(git_has_diff || echo -n '✗')"
+        P+="${COLOUR_OFF}"
         P+="\n"
         P+="\$"
         P+=" "

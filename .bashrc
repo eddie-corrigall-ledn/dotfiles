@@ -1,5 +1,13 @@
 #!/bin/bash
 
+########
+# Python
+########
+
+export PATH="/usr/local/opt/python@3.7/bin:$PATH"
+export PATH="/usr/local/opt/python@3.7/bin/python3.7:$PATH"
+export PATH="/usr/local/opt/python/libexec/bin:$PATH"
+
 #######
 # XCode
 #######

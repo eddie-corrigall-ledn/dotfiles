@@ -18,6 +18,13 @@ function xcode-reinstall() {
     xcode-select --install
 }
 
+########
+# Docker
+########
+
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+
 ###########
 # Coreutils
 ###########
@@ -185,7 +192,7 @@ function space() {
     if [[ -z "$dir" ]]; then
         dir="$PWD"
     fi
-    du --human-readable --max-depth=1 "$dir" \
+    gdu --human-readable --max-depth=1 "$dir" \
         | grep --extended-regexp 'K|M|G' \
         | sort --human-numeric-sort --reverse
 }

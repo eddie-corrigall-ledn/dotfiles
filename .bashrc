@@ -237,7 +237,7 @@ function git_name() {
 }
 
 function git_has_diff() {
-    git diff --quite HEAD 2> /dev/null
+    git diff --quiet HEAD 2> /dev/null
 }
 
 #####

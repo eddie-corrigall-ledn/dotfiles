@@ -237,7 +237,7 @@ function git_name() {
 }
 
 function git_has_diff() {
-    git diff --quite HEAD 2> /dev/null
+    git diff --quiet HEAD 2> /dev/null
 }
 
 #####
@@ -320,7 +320,7 @@ function prompt_command() {
         P+="${GREEN}:\w"
         P+=" "
         P+="${RED_BOLD}\$(git_branch)"
-        P+="${YELLOW_BOLD}\$(git_has_diff || echo -n '✗')"
+        P+="${YELLOW_BOLD}\$([ ! -d .git ] || git_has_diff || echo -n '✗')"
         P+="${COLOUR_OFF}"
         P+="\n"
         P+="\$"
